@@ -1,5 +1,48 @@
-#/
+# Import Dependencies
+import numpy as np
+
+
+import sqlalchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy import func
+from flask import Flask, jsonify
+
+
+#################################################
+# Database Setup
+#################################################
+
+# Create an engine 
+engine = create_engine("sqlite:///Resources/hawaii.sqlite", echo=False)
+
+# Reflect Database into ORM classes
+Base = automap_base()
+Base.prepare(engine, reflect=True)
+Base.classes.keys()
+
+# Save a reference to measurement and station
+Measurement = Base.classes.measurement
+Station = Base.classes.station
+
+#################################################
+# Flask Setup
+#################################################
+app = Flask(__name__)
+
+
+#################################################
+# Flask Routes
+#################################################
+
+
 #Home page.
+
+
+
+
+
 #List all routes that are available.
 
 
