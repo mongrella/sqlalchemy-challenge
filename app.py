@@ -78,7 +78,7 @@ def precipitation():
     return jsonify(all_precipitation)
 
 #/api/v1.0/stations
-#Return a JSON list of stations from the dataset in desscending order.
+#Return a JSON list of stations from the dataset in descending order.
 @app.route("/api/v1.0/stations")
 def stations():
 # Create our session (link) from Python to the DB
@@ -95,13 +95,26 @@ def stations():
     return jsonify(all_precipitation)
 
 
-
-
 #/api/v1.0/tobs
 #Query the dates and temperature observations of the most active station 
 # for the last year of data.
 #Return a JSON list of temperature observations (TOBS) for the previous year.
 @app.route("/api/v1.0/tobs")
+def tobs():
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of dates and temperature observations for station USC00519281"""
+    # Query all tobs for the previous year
+    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date > 2016-8-23).all()
+    
+    session.close()
+
+    # Convert list of tuples into normal list
+    active_station = list(np.travel(results))
+
+    return jsonify(active_station)
+
 
 
 
