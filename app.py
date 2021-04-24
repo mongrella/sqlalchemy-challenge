@@ -47,8 +47,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/START<br/>"
-        f"/api/v1.0/STARTEND<br/>"
+        f"/api/v1.0/start_date<br/>"
+        f"/api/v1.0/start_date/end_date<br/>"
     )
 
 
@@ -106,7 +106,7 @@ def tobs():
 
     """Return a list of dates and temperature observations for station USC00519281"""
     # Query all tobs for the previous year
-    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date > 2016-8-23).all()
+    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= 2016-8-23).all()
     
     session.close()
 
@@ -117,10 +117,15 @@ def tobs():
 
 
 
-
 #/api/v1.0/<start> and /api/v1.0/<start>/<end>
 #Return a JSON list of the minimum temperature, the average temperature, 
 # and the max temperature for a given start or start-end range.
 #When given the start only, calculate TMIN, TAVG, and TMAX for all dates 
 # greater than and equal to the start date.
-#When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.
+@app.route("/api/v1.0/<start>")
+
+
+
+#When given the start and the end date, calculate the TMIN, TAVG, 
+# and TMAX for dates between the start and end date inclusive.
+@app.route("/api/v1.0/<start>/<end>")
