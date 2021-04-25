@@ -86,11 +86,11 @@ def stations():
 
     """Return a list of all stations"""
     # Query all stations
-    results = session.query(Station.station).order_by(Station.station).desc().all()
+    results = session.query(Station.station).order_by(Station.station.desc()).all()
     session.close()
 
     # Convert list of tuples into normal list
-    stations_list = list(np.travel(results))
+    stations_list = list(np.ravel(results))
 
     return jsonify(stations_list)
 
@@ -106,12 +106,18 @@ def tobs():
 
     """Return a list of dates and temperature observations for station USC00519281"""
     # Query all tobs for the previous year
-    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= 2016-8-23).all()
+    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').filter(Measurement.date >= '2016-8-23').order_by(Measurement.date).all()
     
     session.close()
 
-    # Convert list of tuples into normal list
-    active_station = list(np.travel(results))
+    # Convert list into a dictionary
+    active_station = []
+    for date, tobs in results:
+        tobs_dict = {}
+        tobs_dict["date"] = date
+        tobs_dict["tobs"] = tobs
+
+        active_station.append(tobs_dict)
 
     return jsonify(active_station)
 
@@ -121,7 +127,7 @@ def tobs():
 
 #When given the start only, calculate TMIN, TAVG, and TMAX for all dates 
 # greater than and equal to the start date.
-@app.route("/api/v1.0/<start>")
+@app.route("/api/v1.0/<start_date>")
 def start_date(start_date):
     # Create our session (link) from Python to the DB
     session = Session(engine)
@@ -152,7 +158,7 @@ def start_date(start_date):
 #When given the start and the end date, calculate the TMIN, TAVG, 
 # and TMAX for dates between the start and end date inclusive.
 @app.route("/api/v1.0/<start>/<end>")
-def start_end_temp(start, end):
+def start_end_temp(start_date, end_date):
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
