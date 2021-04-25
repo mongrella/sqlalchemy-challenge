@@ -62,7 +62,7 @@ def precipitation():
    
     """Return a list of all precipitation"""
     # Query all precipitation
-    results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= "2016-08-24").all()
+    results = session.query(Measurement.date, Measurement.prcp).all()
     session.close()
 
 # Create a dictionary from the list of precipitation
@@ -86,13 +86,13 @@ def stations():
 
     """Return a list of all stations"""
     # Query all stations
-    results = session.query(Station.station).order_by(Station.station).all()
+    results = session.query(Station.station).order_by(Station.station).desc().all()
     session.close()
 
     # Convert list of tuples into normal list
     stations_list = list(np.travel(results))
 
-    return jsonify(all_precipitation)
+    return jsonify(stations_list)
 
 
 #/api/v1.0/tobs
