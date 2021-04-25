@@ -48,7 +48,7 @@ def welcome():
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
         f"/api/v1.0/start_date<br/>"
-        f"/api/v1.0/start_date/end_date<br/>"
+        f"/api/v1.0/start_date/end_date"
     )
 
 
@@ -149,8 +149,33 @@ def start_date(start_date):
 
 
 
-
-
 #When given the start and the end date, calculate the TMIN, TAVG, 
 # and TMAX for dates between the start and end date inclusive.
 @app.route("/api/v1.0/<start>/<end>")
+def start_end_temp(start, end):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+
+    """Return a list of TMIN, TAVG, and TMAX for all dates between start/end date"""
+    #Query all TOBS
+
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start_date).filter(Measurement.date <= end_date).all()
+
+    session.close()
+
+    # Create a dictionary from data and append
+
+    start_end_temp = []
+    for date, min, avg, max in results:
+        start_end_temp_dict = {}
+        start_end_temp_dict["date"] = date
+        start_end_temp_dict["TMIN"] = min
+        start_end_temp_dict["TAVG"] = avg
+        start_end_temp_dict["TMAX"] = max
+
+        start_end_temp.append(start_end_temp_dict)
+
+    return jsonify(start_end_temp)
+
+if __name__ == '__main__':
+    app.run(debug=True)
